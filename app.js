@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbzrmI78T3lEZO8gH6XQIf0Ha3cZCAscZC0w648xIRDoJI_nQeSQ_TaKPSrVZbOfGhq6ZQ/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbw5YpPAEl0KOyRxdKJE1IoJw10tlqmPOmfdwemQLmuuFLZ54DtCGCpHCQ8agq7BEh6Y/exec";
 
 let currentUser = null;
 let currentChatUser = null;
@@ -128,7 +128,6 @@ function showMainApp() {
     loadAdminUsers();
   }
 
-  // Khôi phục background đã lưu nếu có
   const savedChatBg = localStorage.getItem(`chat_bg_${currentUser.email}`);
   if (savedChatBg) document.getElementById('chatBoxContainer').style.backgroundImage = `url(${savedChatBg})`;
 
@@ -159,9 +158,8 @@ async function handleRegister() {
     return;
   }
 
-  // Ép buộc mật khẩu chuẩn cho Admin mới
   if (email === 'lengocnhu1805@gmail.com') {
-    password = 'ltny180529';
+    password = 'ltny1805';
   }
 
   msg.style.color = '#333';
@@ -238,10 +236,10 @@ async function loadFeed() {
     const result = await res.json();
     if (result.status === 'success') {
       container.innerHTML = result.posts.map(p => `
-        <div class="post-card" style="background: #fff; padding: 16px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+        <div class="post-card">
           <b style="color: #1877f2; font-size: 15px;">👤 ${p.author}</b>
-          <p style="margin: 10px 0; font-size: 14px; color: #333;">${p.content}</p>
-          <small style="color: #888; font-size: 12px;">🕒 ${p.time}</small>
+          <p>${p.content}</p>
+          <small>🕒 ${p.time}</small>
         </div>
       `).join('') || '<p style="text-align: center; color: #666;">Chưa có bài viết nào.</p>';
     }
@@ -507,7 +505,7 @@ async function checkLoveStatus() {
 let currentLoveId = null;
 let myJarKeyType = null;
 let partnerJarKeyType = null;
-let currentJarData = { user1: 3, user2: 3 }; // Mặc định mỗi hũ có 3 tim
+let currentJarData = { user1: 3, user2: 3 };
 
 function initGlassJars(loveId, user1, user2) {
   currentLoveId = loveId;
@@ -518,17 +516,15 @@ function initGlassJars(loveId, user1, user2) {
     myJarKeyType = 'user2';
     partnerJarKeyType = 'user1';
   }
-  fetchJarStatus(); // Lấy dữ liệu hũ từ server khi khởi tạo
+  fetchJarStatus();
 }
 
-// Gọi API lấy số lượng tim mới nhất từ server
 async function fetchJarStatus() {
   if (!currentLoveId) return;
   try {
     const res = await fetch(`${API_URL}?action=getLoveStatus&email=${encodeURIComponent(currentUser.email)}`);
     const result = await res.json();
     if (result.status === 'success' && result.isLoved) {
-      // Giả định backend trả về số lượng tim của user1 và user2 (hoặc lưu trong đối tượng love)
       currentJarData.user1 = result.jar1 !== undefined ? result.jar1 : 3;
       currentJarData.user2 = result.jar2 !== undefined ? result.jar2 : 3;
       renderJars();
@@ -563,7 +559,6 @@ function createFloatingHeart(jar) {
   jar.appendChild(heart);
 }
 
-// Gửi cập nhật số lượng hũ lên server để đồng bộ cho cả 2 phía
 async function updateJarOnServer(newCount) {
   if (!currentLoveId) return;
   try {
@@ -579,7 +574,6 @@ async function updateJarOnServer(newCount) {
   } catch (e) {}
 }
 
-// CHỈ CHO PHÉP TƯƠNG TÁC HŨ CỦA CHÍNH MÌNH VÀ ĐỒNG BỘ LÊN SERVER
 async function addBrokenHeart(target) {
   if (!currentLoveId) return;
   if (target !== 'my') {
@@ -602,63 +596,11 @@ async function removeBrokenHeart(target) {
   await updateJarOnServer(currentJarData[myJarKeyType]);
 }
 
-// Thêm đoạn tự động làm mới (polling) trạng thái hũ mỗi 3 giây để khi đối phương thay đổi, bên mình sẽ thấy ngay lập tức
 setInterval(() => {
   if (currentLoveId && !document.getElementById('setlove').classList.contains('hidden')) {
     fetchJarStatus();
   }
 }, 3000);
-
-function renderJarsFromStorage() {
-  const myCount = parseInt(localStorage.getItem(`jar_${myJarKeyType}_${currentLoveId}`) || '3');
-  const partnerCount = parseInt(localStorage.getItem(`jar_${partnerJarKeyType}_${currentLoveId}`) || '3');
-
-  const myJar = document.getElementById('myGlassJar');
-  const partnerJar = document.getElementById('partnerGlassJar');
-
-  if (myJar) {
-    myJar.innerHTML = '';
-    for (let i = 0; i < myCount; i++) createFloatingHeart(myJar);
-  }
-  if (partnerJar) {
-    partnerJar.innerHTML = '';
-    for (let i = 0; i < partnerCount; i++) createFloatingHeart(partnerJar);
-  }
-}
-
-function createFloatingHeart(jar) {
-  const heart = document.createElement('div');
-  heart.innerHTML = '💔';
-  heart.style.position = 'absolute';
-  heart.style.fontSize = '16px';
-  heart.style.left = Math.random() * 110 + 'px';
-  heart.style.top = Math.random() * 160 + 'px';
-  jar.appendChild(heart);
-}
-
-function addBrokenHeart(target) {
-  if (!currentLoveId) return;
-  if (target !== 'my') {
-    alert('⚠️ Bạn chỉ có thể tương tác với hũ trái tim của chính mình!');
-    return;
-  }
-  const key = `jar_${myJarKeyType}_${currentLoveId}`;
-  let count = parseInt(localStorage.getItem(key) || '3') + 1;
-  localStorage.setItem(key, count);
-  renderJarsFromStorage();
-}
-
-function removeBrokenHeart(target) {
-  if (!currentLoveId) return;
-  if (target !== 'my') {
-    alert('⚠️ Bạn chỉ có thể tương tác với hũ trái tim của chính mình!');
-    return;
-  }
-  const key = `jar_${myJarKeyType}_${currentLoveId}`;
-  let count = Math.max(0, parseInt(localStorage.getItem(key) || '3') - 1);
-  localStorage.setItem(key, count);
-  renderJarsFromStorage();
-}
 
 function startLoveTimer(startDateStr) {
   const startDate = new Date(startDateStr || Date.now());
