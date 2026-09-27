@@ -1,5 +1,7 @@
-const API_URL = "https://script.google.com/macros/s/AKfycby83_SrchW-JTWonMTFgMVDZYLGdGstZAPv8n3jba9vvkKgs9pXsALvE0JWsItDz7jnlQ/exec";
-const isAdminMode = new URLSearchParams(window.location.search).get('admin') === '1';
+// ⚠️ Sau khi Deploy code.gs, dán URL /exec vào đây:
+const API_URL = "https://script.google.com/macros/s/AKfycbx32hvCHLMxenh964rLFGKfZzY9ZPNO1SyJzwKBSqpl51mjPGpFoXWfF7fQcm80oO8B/exec";
+const ADMIN_EMAIL = 'lengocnhu1805@gmail.com'; // email này tự thấy tab Admin khi đăng nhập; mật khẩu do chính admin đặt lúc đăng ký
+
 let currentUser = null;
 let currentChatUser = null;
 let base64Media = "";
@@ -91,7 +93,7 @@ function showMainApp() {
   $('logout').classList.remove('hidden');
   $('who').textContent = `✨ Xin chào, ${currentUser.name || currentUser.email}`;
 
-  if (isAdminMode) {
+  if (currentUser.email === ADMIN_EMAIL) {
     $('adminTab').classList.remove('hidden');
     $('adminMobileTab')?.classList.remove('hidden');
     loadAdminUsers();
