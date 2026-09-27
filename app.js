@@ -60,6 +60,7 @@ function initApp() {
 
   bindBackgroundPicker('chatBgInput', 'chatBoxContainer', 'chat_bg');
   bindBackgroundPicker('loveBgInput', 'setlove-active-section', 'love_bg');
+  bindChatSwipe();
 
   document.querySelectorAll('.nav button[data-tab]').forEach((btn) => {
     btn.addEventListener('click', (e) => switchTab(e.currentTarget.getAttribute('data-tab')));
@@ -184,7 +185,7 @@ function switchTab(tabName) {
   $(tabName)?.classList.remove('hidden');
 
   if (tabName === 'feed') loadFeed();
-  if (tabName === 'chat') loadChatUsers();
+  if (tabName === 'chat') { closeChatFocus(); loadChatUsers(); }
   if (tabName === 'rewards') loadRewards();
   if (tabName === 'friends') loadFriendsData();
   if (tabName === 'setlove') loadSetLoveData();
@@ -356,6 +357,42 @@ async function loadChatUsers() {
       `).join('') || '<p class="empty-hint small">Chưa có bạn.</p>';
     }
   } catch (e) {}
+}
+
+function bindChatSwipe() {
+  const chatBody = $('chatBody');
+  if (!chatBody) return;
+  let startX = 0, startY = 0, tracking = false;
+
+  chatBody.addEventListener('touchstart', (e) => {
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    tracking = true;
+  }, { passive: true });
+
+  chatBody.addEventListener('touchend', (e) => {
+    if (!tracking) return;
+    tracking = false;
+    const dx = e.changedTouches[0].clientX - startX;
+    const dy = e.changedTouches[0].clientY - startY;
+    if (Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy) * 1.5) return; // phải là vuốt ngang rõ ràng
+    if (dx < 0) {
+      openChatFocus();
+    } else {
+      closeChatFocus();
+    }
+  }, { passive: true });
+}
+
+function openChatFocus() {
+  if (!currentChatUser) return; // chỉ full màn hình khi đã chọn 1 cuộc chat
+  $('chatBody')?.classList.add('chat-focused');
+  $('backToListBtn')?.classList.remove('hidden');
+}
+
+function closeChatFocus() {
+  $('chatBody')?.classList.remove('chat-focused');
+  $('backToListBtn')?.classList.add('hidden');
 }
 
 function selectChatUser(email, name) {
