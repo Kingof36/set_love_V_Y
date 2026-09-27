@@ -80,10 +80,13 @@
           </div>
         </div>
 
-        <div class="chat-body">
+        <div class="chat-body" id="chatBody">
           <div id="chatFriends"></div>
           <div id="chatBoxContainer">
-            <div id="chatTitleText">Chọn bạn để chat...</div>
+            <div class="chat-title-row">
+              <button id="backToListBtn" class="hidden" onclick="closeChatFocus()">‹ Danh sách</button>
+              <div id="chatTitleText">Chọn bạn để chat...</div>
+            </div>
             <div id="messages"></div>
             <div class="chat-inputbar">
               <input type="file" id="imageInput" accept="image/*" class="hidden">
