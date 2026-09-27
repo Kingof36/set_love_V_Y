@@ -55,11 +55,16 @@ main.app-main { padding: 15px; max-width: 600px; margin: 0 auto; width: 100%; ov
 .chat-view { display: flex; flex-direction: column; height: 75vh; }
 .chat-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
 .icon-btn { background: #e4e6eb; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 11px; }
-.chat-body { display: flex; flex: 1; gap: 10px; overflow: hidden; }
-#chatFriends { width: 35%; border-right: 1px solid #ddd; overflow-y: auto; overflow-x: hidden; flex-shrink: 0; }
+.chat-body { display: flex; flex: 1; gap: 10px; overflow: hidden; touch-action: pan-y; }
+#chatFriends { width: 35%; border-right: 1px solid #ddd; overflow-y: auto; overflow-x: hidden; flex-shrink: 0; transition: width 0.2s ease; }
 .chat-friend-item { padding: 10px; cursor: pointer; border-bottom: 1px solid #eee; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .chat-friend-item:hover { background: #f5f6f7; }
 #chatBoxContainer { flex: 1; min-width: 0; display: flex; flex-direction: column; overflow: hidden; padding: 5px; border-radius: 8px; background-size: cover; background-position: center; }
+.chat-title-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+#backToListBtn { background: rgba(255,255,255,0.9); border: none; padding: 4px 10px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; color: #1877f2; flex-shrink: 0; }
+
+/* Chế độ vuốt để xem full đoạn chat: ẩn hẳn danh sách bạn bè */
+.chat-body.chat-focused #chatFriends { display: none; }
 #chatTitleText { font-weight: bold; font-size: 14px; margin-bottom: 8px; color: #1877f2; background: rgba(255,255,255,0.8); padding: 4px 8px; border-radius: 4px; }
 #messages { flex: 1; overflow-y: auto; background: rgba(249,249,249,0.9); padding: 10px; border-radius: 8px; border: 1px solid #eee; margin-bottom: 8px; }
 .chat-inputbar { display: flex; flex-direction: column; gap: 6px; background: rgba(255,255,255,0.9); padding: 6px; border-radius: 6px; }
