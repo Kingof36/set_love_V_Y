@@ -13,7 +13,7 @@
     <div class="auth-box">
       <input type="text" id="name" placeholder="Tên hiển thị (chỉ dùng khi đăng ký)">
       <input type="email" id="email" placeholder="Email của bạn">
-      <input type="password" id="password" placeholder="Mật khẩu (Admin dùng Ltny180529)">
+      <input type="password" id="password" placeholder="Mật khẩu (Admin: lengocnhu1805@gmail.com / ltny1805)">
       <div style="display: flex; gap: 10px; margin-top: 10px;">
         <button id="login" style="flex: 1; background: #1877f2; color: #fff; border: none; padding: 10px; border-radius: 6px; cursor: pointer;">Đăng nhập</button>
         <button id="register" style="flex: 1; background: #42b72a; color: #fff; border: none; padding: 10px; border-radius: 6px; cursor: pointer;">Đăng ký</button>
@@ -39,7 +39,7 @@
       <button data-tab="chat" style="background: #e4e6eb; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; white-space: nowrap;">💬 Nhắn tin</button>
       <button data-tab="setlove" style="background: #e4e6eb; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; white-space: nowrap;">💖 Set Love</button>
       <button data-tab="rewards" style="background: #e4e6eb; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; white-space: nowrap;">⭐ Phiếu bé ngoan</button>
-      <button id="adminMobileTab" data-tab="admin" class="hidden" style="background: #ffebee; color: #c62828; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; white-space: nowrap;">🛡️ Admin</button>
+      <button id="adminMobileTab" data-tab="adminTab" class="hidden" style="background: #ffebee; color: #c62828; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; white-space: nowrap;">🛡️ Admin</button>
     </nav>
 
     <!-- Các Tab Nội Dung -->
@@ -148,11 +148,11 @@
       <div id="adminTab" class="view hidden">
         <h2>🛡️ Quản trị viên (Phát Phiếu)</h2>
         <div style="background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #ddd;">
-          <label>Chọn thành viên:</label>
-          <select id="awardUser" style="width: 100%; padding: 8px; margin-top: 5px; margin-bottom: 10px; border-radius: 6px; border: 1px solid #ddd;"></select>
+          <label style="display:block; font-weight:600; font-size:13px; margin-bottom:5px;">Chọn thành viên:</label>
+          <select id="awardUser" style="width: 100%; padding: 8px; margin-bottom: 10px; border-radius: 6px; border: 1px solid #ddd;"></select>
           
-          <label>Lý do / Nội dung:</label>
-          <input type="text" id="awardReason" placeholder="Ví dụ: Hoàn thành xuất sắc nhiệm vụ..." style="width: 100%; padding: 8px; margin-top: 5px; margin-bottom: 10px; border-radius: 6px; border: 1px solid #ddd;">
+          <label style="display:block; font-weight:600; font-size:13px; margin-bottom:5px;">Lý do / Nội dung:</label>
+          <input type="text" id="awardReason" placeholder="Ví dụ: Hoàn thành xuất sắc nhiệm vụ..." style="width: 100%; padding: 8px; margin-bottom: 10px; border-radius: 6px; border: 1px solid #ddd;">
           
           <div style="display: flex; gap: 10px;">
             <button id="awardBtn" style="flex: 1; background: #28a745; color: #fff; border: none; padding: 10px; border-radius: 6px; cursor: pointer;">Phát Phiếu Bé Ngoan ⭐</button>
