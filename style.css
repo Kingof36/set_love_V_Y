@@ -56,10 +56,10 @@ main.app-main { padding: 15px; max-width: 600px; margin: 0 auto; width: 100%; ov
 .chat-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
 .icon-btn { background: #e4e6eb; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 11px; }
 .chat-body { display: flex; flex: 1; gap: 10px; overflow: hidden; }
-#chatFriends { width: 35%; border-right: 1px solid #ddd; overflow-y: auto; }
-.chat-friend-item { padding: 10px; cursor: pointer; border-bottom: 1px solid #eee; font-size: 13px; }
+#chatFriends { width: 35%; border-right: 1px solid #ddd; overflow-y: auto; overflow-x: hidden; flex-shrink: 0; }
+.chat-friend-item { padding: 10px; cursor: pointer; border-bottom: 1px solid #eee; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .chat-friend-item:hover { background: #f5f6f7; }
-#chatBoxContainer { flex: 1; display: flex; flex-direction: column; overflow: hidden; padding: 5px; border-radius: 8px; background-size: cover; background-position: center; }
+#chatBoxContainer { flex: 1; min-width: 0; display: flex; flex-direction: column; overflow: hidden; padding: 5px; border-radius: 8px; background-size: cover; background-position: center; }
 #chatTitleText { font-weight: bold; font-size: 14px; margin-bottom: 8px; color: #1877f2; background: rgba(255,255,255,0.8); padding: 4px 8px; border-radius: 4px; }
 #messages { flex: 1; overflow-y: auto; background: rgba(249,249,249,0.9); padding: 10px; border-radius: 8px; border: 1px solid #eee; margin-bottom: 8px; }
 .chat-inputbar { display: flex; gap: 5px; align-items: center; background: rgba(255,255,255,0.9); padding: 5px; border-radius: 6px; }
@@ -119,4 +119,6 @@ main.app-main { padding: 15px; max-width: 600px; margin: 0 auto; width: 100%; ov
 /* ---------- Responsive di động ---------- */
 @media (max-width: 768px) {
   aside.nav { width: 100%; height: 56px; flex-direction: row; justify-content: space-around; padding: 0; border-top: 1px solid #e1e8ed; }
+  #chatFriends { width: 76px; }
+  .chat-friend-item { font-size: 11px; text-align: center; padding: 8px 4px; }
 }
