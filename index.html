@@ -88,11 +88,15 @@
             <div class="chat-inputbar">
               <input type="file" id="imageInput" accept="image/*" class="hidden">
               <input type="file" id="videoInput" accept="video/*" class="hidden">
-              <button id="attachImageBtn" title="Gửi ảnh">📷</button>
-              <button id="attachVideoBtn" title="Gửi video">🎥</button>
-              <button id="recordVoiceBtn" title="Ghi âm giọng nói">🎙️</button>
-              <input type="text" id="message" placeholder="Nhập tin nhắn...">
-              <button id="sendBtn">Gửi</button>
+              <div class="chat-attach-row">
+                <button id="attachImageBtn" title="Gửi ảnh">📷</button>
+                <button id="attachVideoBtn" title="Gửi video">🎥</button>
+                <button id="recordVoiceBtn" title="Ghi âm giọng nói">🎙️</button>
+              </div>
+              <div class="chat-message-row">
+                <input type="text" id="message" placeholder="Nhập tin nhắn...">
+                <button id="sendBtn">Gửi</button>
+              </div>
             </div>
           </div>
         </div>
