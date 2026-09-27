@@ -1,5 +1,5 @@
 // ⚠️ Sau khi Deploy code.gs, dán URL /exec vào đây:
-const API_URL = "https://script.google.com/macros/s/AKfycbx32hvCHLMxenh964rLFGKfZzY9ZPNO1SyJzwKBSqpl51mjPGpFoXWfF7fQcm80oO8B/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyM-ttM0ADFlv57jROk3yboKbyf26cbm_1tWcrUjPNY3FbB7CTqnaZiS-YIWx9Bs27a/exec";
 const ADMIN_EMAIL = 'lengocnhu1805@gmail.com'; // email này tự thấy tab Admin khi đăng nhập; mật khẩu do chính admin đặt lúc đăng ký
 
 let currentUser = null;
@@ -465,7 +465,8 @@ let currentJarData = { user1: 3, user2: 3 };
 
 function initGlassJars(loveId, user1, user2) {
   currentLoveId = loveId;
-  if (currentUser.email === user1) {
+  const myEmail = String(currentUser.email || '').trim().toLowerCase();
+  if (myEmail === String(user1 || '').trim().toLowerCase()) {
     myJarKeyType = 'user1';
     partnerJarKeyType = 'user2';
   } else {
@@ -480,8 +481,8 @@ async function fetchJarStatus() {
   try {
     const result = await apiGet({ action: 'getLoveStatus', email: currentUser.email });
     if (result.status === 'success' && result.isLoved) {
-      currentJarData.user1 = result.jar1 ?? 3;
-      currentJarData.user2 = result.jar2 ?? 3;
+      currentJarData.user1 = Number(result.jar1 ?? 3);
+      currentJarData.user2 = Number(result.jar2 ?? 3);
       renderJars();
     }
   } catch (e) {}
@@ -489,8 +490,12 @@ async function fetchJarStatus() {
 
 function renderJars() {
   const myJar = $('myGlassJar'), partnerJar = $('partnerGlassJar');
-  if (myJar) fillJar(myJar, currentJarData[myJarKeyType]);
-  if (partnerJar) fillJar(partnerJar, currentJarData[partnerJarKeyType]);
+  const myCount = currentJarData[myJarKeyType] ?? 0;
+  const partnerCount = currentJarData[partnerJarKeyType] ?? 0;
+  if (myJar) fillJar(myJar, myCount);
+  if (partnerJar) fillJar(partnerJar, partnerCount);
+  if ($('myJarCount')) $('myJarCount').textContent = myCount;
+  if ($('partnerJarCount')) $('partnerJarCount').textContent = partnerCount;
 }
 
 function fillJar(jar, count) {
@@ -507,27 +512,43 @@ function createFloatingHeart(jar) {
   jar.appendChild(heart);
 }
 
+/** Lưu số lượng tim lên server; trả về true nếu lưu thành công. */
 async function updateJarOnServer(newCount) {
-  if (!currentLoveId) return;
+  if (!currentLoveId) return false;
   try {
-    await api('updateJar', { loveId: currentLoveId, userType: myJarKeyType, count: newCount });
-  } catch (e) {}
+    const result = await api('updateJar', { loveId: currentLoveId, userType: myJarKeyType, count: newCount });
+    return result.status === 'success';
+  } catch (e) {
+    return false;
+  }
 }
 
 async function addBrokenHeart(target) {
   if (!currentLoveId) return;
   if (target !== 'my') return alert('⚠️ Bạn chỉ có thể tương tác với hũ trái tim của chính mình!');
-  currentJarData[myJarKeyType]++;
+  const previous = currentJarData[myJarKeyType];
+  currentJarData[myJarKeyType] = previous + 1;
   renderJars();
-  await updateJarOnServer(currentJarData[myJarKeyType]);
+  const saved = await updateJarOnServer(currentJarData[myJarKeyType]);
+  if (!saved) {
+    currentJarData[myJarKeyType] = previous;
+    renderJars();
+    alert('⚠️ Không lưu được thay đổi, vui lòng thử lại!');
+  }
 }
 
 async function removeBrokenHeart(target) {
   if (!currentLoveId) return;
   if (target !== 'my') return alert('⚠️ Bạn chỉ có thể tương tác với hũ trái tim của chính mình!');
-  currentJarData[myJarKeyType] = Math.max(0, currentJarData[myJarKeyType] - 1);
+  const previous = currentJarData[myJarKeyType];
+  currentJarData[myJarKeyType] = Math.max(0, previous - 1);
   renderJars();
-  await updateJarOnServer(currentJarData[myJarKeyType]);
+  const saved = await updateJarOnServer(currentJarData[myJarKeyType]);
+  if (!saved) {
+    currentJarData[myJarKeyType] = previous;
+    renderJars();
+    alert('⚠️ Không lưu được thay đổi, vui lòng thử lại!');
+  }
 }
 
 setInterval(() => {
