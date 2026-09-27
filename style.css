@@ -11,82 +11,21 @@ header { background: #fff; padding: 12px 24px; display: flex; align-items: cente
 .hidden { display: none !important; }
 
 /* Màn hình Đăng nhập / Đăng ký */
-.auth { flex: 1; display: flex; align-items: center; justify-content: center; background: #f0f2f5; padding: 16px; overflow-y: auto; }
-.panel { background: #fff; padding: 24px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
-.panel h1 { font-size: 26px; color: #1877f2; margin-bottom: 6px; text-align: center; }
-.panel p { margin-bottom: 16px; color: #606770; font-size: 14px; text-align: center; }
-.panel input, .panel select { width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid #ccd0d5; border-radius: 6px; outline: none; font-size: 15px; background: #f5f6f7; }
-.panel input:focus, .panel select:focus { border-color: #1877f2; background: #fff; }
-.actions { display: flex; gap: 10px; }
-.actions button { flex: 1; padding: 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; background: #1877f2; color: #fff; font-size: 15px; }
-.actions button.secondary { background: #42b72a; }
-#authMsg { display: block; margin-top: 12px; font-size: 14px; text-align: center; }
+.auth-container { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #f0f2f5; padding: 16px; height: 100vh; }
+.auth-container h2 { font-size: 32px; color: #1877f2; margin-bottom: 15px; }
+.auth-box { background: #fff; padding: 24px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); width: 100%; max-width: 380px; }
+.auth-box input { width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid #ccd0d5; border-radius: 6px; outline: none; font-size: 15px; background: #f5f6f7; }
+.auth-box input:focus { border-color: #1877f2; background: #fff; }
 
-/* Bố cục ứng dụng chính */
-.layout { display: flex; flex: 1; overflow: hidden; }
-aside.nav { width: 260px; background: #fff; border-right: 1px solid #e1e8ed; display: flex; flex-direction: column; gap: 6px; padding: 16px; flex-shrink: 0; box-shadow: none; border-radius: 0; }
-aside.nav button { width: 100%; padding: 12px 14px; text-align: left; background: transparent; border: none; border-radius: 6px; font-size: 15px; cursor: pointer; font-weight: 600; color: #050505; }
-aside.nav button:hover { background: #f2f2f2; }
-
-.content { flex: 1; padding: 24px; overflow-y: auto; background: #f0f2f5; display: flex; flex-direction: column; }
+/* Các thành phần chung */
 .view { flex: 1; display: flex; flex-direction: column; }
-.view h2 { margin-bottom: 16px; font-size: 22px; color: #1c1e21; }
+.view h2, .view h3 { margin-bottom: 12px; color: #1c1e21; }
 
-/* Bảng tin */
-.post-box { background: #fff; padding: 16px; border-radius: 8px; border: 1px solid #ccd0d5; margin-bottom: 16px; }
-textarea { width: 100%; padding: 10px; border: 1px solid #ccd0d5; border-radius: 6px; resize: none; height: 80px; margin-bottom: 10px; outline: none; font-size: 14px; }
-#postBtn { padding: 8px 20px; background: #1877f2; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; float: right; }
 .post-card { background: #fff; border: 1px solid #e1e8ed; padding: 16px; margin-bottom: 12px; border-radius: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
 .post-card p { font-size: 14px; margin: 8px 0; word-break: break-word; color: #050505; }
 .post-card small { color: #65676b; font-size: 12px; }
 
-/* Tab Bạn bè */
-.friend-search-box { display: flex; gap: 8px; margin-bottom: 12px; }
-.friend-search-box input { flex: 1; padding: 10px; border: 1px solid #ccd0d5; border-radius: 6px; outline: none; margin-bottom: 0; }
-.friend-search-box button { padding: 0 20px; background: #1877f2; color: #fff; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
-.friend-list-container { background: #fff; border-radius: 8px; border: 1px solid #e1e8ed; padding: 12px; margin-bottom: 20px; min-height: 50px; }
-.friend-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #f0f2f5; }
-.friend-item:last-child { border-bottom: none; }
-.friend-item button { padding: 6px 14px; background: #1877f2; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 13px; }
-.friend-item button.accept { background: #42b72a; }
-
-/* Messenger chuẩn */
-.chatgrid { display: flex; flex: 1; border: 1px solid #ccd0d5; border-radius: 8px; overflow: hidden; background: #fff; height: calc(100vh - 140px); }
-.chat-friends-list { width: 300px; border-right: 1px solid #ccd0d5; overflow-y: auto; background: #fff; }
-.chat-user-item { padding: 12px 16px; border-bottom: 1px solid #f0f2f5; cursor: pointer; font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 10px; }
-.chat-user-item:hover { background: #f2f2f2; }
-.chat-box-container { flex: 1; display: flex; flex-direction: column; background: #fff; }
-.chat-title { padding: 12px 16px; background: #fff; font-weight: bold; border-bottom: 1px solid #e1e8ed; font-size: 15px; }
-.messages { flex: 1; padding: 16px; overflow-y: auto; background: #f0f2f5; display: flex; flex-direction: column; gap: 10px; }
-.message-bubble { max-width: 65%; padding: 10px 14px; border-radius: 18px; font-size: 14px; word-break: break-word; line-height: 1.4; }
-.message-bubble.sent { align-self: flex-end; background: #0084ff; color: #fff; border-bottom-right-radius: 4px; }
-.message-bubble.received { align-self: flex-start; background: #e4e6eb; color: #050505; border-bottom-left-radius: 4px; }
-.message-bubble small { display: block; font-size: 10px; opacity: 0.7; margin-top: 4px; text-align: right; }
-.send { display: flex; padding: 12px; border-top: 1px solid #e1e8ed; gap: 10px; align-items: center; background: #fff; }
-.send input[type="text"] { flex: 1; padding: 10px 16px; border: 1px solid #ccd0d5; border-radius: 20px; outline: none; background: #f0f2f5; font-size: 14px; }
-.send button { padding: 8px 16px; border: none; border-radius: 20px; background: #1877f2; color: #fff; cursor: pointer; font-weight: bold; }
-#attachBtn { background: #e4e6eb; color: #050505; border-radius: 50%; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
-
-/* Phiếu bé ngoan & Admin */
-.stat { background: #fff; border: 1px solid #e1e8ed; padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 16px; }
-.stat b { font-size: 36px; color: #1877f2; display: block; margin-bottom: 4px; }
-.reward-item { background: #fff; border: 1px solid #e1e8ed; padding: 12px 16px; border-radius: 6px; margin-bottom: 8px; font-size: 14px; }
-.admin-form { background: #fff; padding: 20px; border-radius: 8px; border: 1px solid #ccd0d5; max-width: 500px; }
-.admin-form label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 13px; color: #606770; }
-#awardBtn { width: 100%; padding: 12px; background: #42b72a; color: #fff; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 15px; margin-top: 10px; }
-
-/* Modal thông báo */
-.modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 1000; }
-.modal-content { background: #fff; padding: 24px; border-radius: 12px; text-align: center; max-width: 340px; width: 100%; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
-.modal-content h3 { color: #1877f2; margin-bottom: 10px; font-size: 20px; }
-.modal-content p { margin-bottom: 20px; font-size: 14px; color: #4b4f56; }
-.modal-content button { padding: 10px 24px; background: #42b72a; color: #fff; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; font-size: 15px; }
-
 /* Responsive di động */
 @media (max-width: 768px) {
-  .layout { flex-direction: column-reverse; }
-  aside.nav { width: 100%; height: 56px; flex-direction: row; justify-content: space-around; padding: 0; border-top: 1px solid #e1e8ed; border-right: none; }
-  aside.nav button { text-align: center; font-size: 11px; padding: 6px; display: flex; flex-direction: column; align-items: center; gap: 2px; }
-  .chatgrid { flex-direction: column; height: calc(100vh - 170px); }
-  .chat-friends-list { width: 100%; max-height: 120px; border-right: none; border-bottom: 1px solid #ccd0d5; }
+  aside.nav { width: 100%; height: 56px; flex-direction: row; justify-content: space-around; padding: 0; border-top: 1px solid #e1e8ed; }
 }
