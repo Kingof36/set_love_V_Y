@@ -28,6 +28,10 @@
       <h1>friendbook</h1>
       <div style="display:flex;align-items:center;gap:10px;">
         <span id="who"></span>
+        <div class="notif-wrap">
+          <button id="notifBell" class="icon-btn" onclick="toggleNotifPanel()">🔔<span id="notifBadge" class="notif-badge hidden">0</span></button>
+          <div id="notifPanel" class="notif-panel hidden"></div>
+        </div>
         <button id="logout" class="hidden">Đăng xuất</button>
       </div>
     </header>
@@ -150,6 +154,7 @@
       <div id="rewards" class="view hidden">
         <h2>⭐ Sổ Thành tích & Phiếu Bé Ngoan</h2>
         <p>Tổng số phiếu bé ngoan nhận được: <b id="weekCount">0</b></p>
+        <p class="empty-hint small">Số liệu được cộng dồn liên tục, chỉ admin mới có thể đặt lại (reset).</p>
         <div id="rewardHistory" style="margin-top:15px;"></div>
       </div>
 
@@ -167,8 +172,13 @@
             <button id="awardBtn">Phát Phiếu Bé Ngoan ⭐</button>
             <button id="awardBadBtn">Phát Phiếu Bé Hư ⚠️</button>
           </div>
+          <button id="resetRewardsBtn" class="reset-btn">🔄 Reset toàn bộ phiếu của người này</button>
           <p id="adminMsg"></p>
         </div>
+
+        <h3 style="margin-top:20px;">📊 Tổng số phiếu đã phát (toàn hệ thống)</h3>
+        <p class="empty-hint small">Số liệu được cộng dồn liên tục — không tự reset theo tuần, chỉ admin mới xoá được bằng nút reset ở trên.</p>
+        <div id="adminRewardsSummary" style="margin-top:10px;"></div>
       </div>
 
     </main>
