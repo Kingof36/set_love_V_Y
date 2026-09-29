@@ -10,6 +10,16 @@ header.header h1 { color: #1877f2; font-size: 20px; }
 #logout { background: #e4e6eb; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; }
 #logout:hover { background: #d8dadf; }
 
+/* ---------- Thông báo ---------- */
+.notif-wrap { position: relative; }
+#notifBell { position: relative; font-size: 16px; padding: 6px 10px; }
+.notif-badge { position: absolute; top: -4px; right: -4px; background: #ff3b30; color: #fff; font-size: 10px; font-weight: 700; border-radius: 999px; min-width: 16px; height: 16px; line-height: 16px; text-align: center; padding: 0 3px; }
+.notif-panel { position: absolute; right: 0; top: 36px; width: 260px; max-height: 320px; overflow-y: auto; background: #fff; border: 1px solid #e1e8ed; border-radius: 10px; box-shadow: 0 4px 14px rgba(0,0,0,0.15); z-index: 50; padding: 6px; }
+.notif-item { display: block; width: 100%; text-align: left; background: none; border: none; padding: 8px; border-radius: 6px; cursor: pointer; font-size: 13px; }
+.notif-item:hover { background: #f5f6f7; }
+.notif-item b { color: #1877f2; }
+.notif-empty { padding: 12px; text-align: center; color: #888; font-size: 13px; }
+
 /* ---------- Đăng nhập / Đăng ký ---------- */
 .auth-container { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #f0f2f5; padding: 16px; height: 100vh; }
 .auth-container h2 { font-size: 32px; color: #1877f2; margin-bottom: 15px; }
@@ -57,7 +67,8 @@ main.app-main { padding: 15px; max-width: 600px; margin: 0 auto; width: 100%; ov
 .icon-btn { background: #e4e6eb; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 11px; }
 .chat-body { display: flex; flex: 1; gap: 10px; overflow: hidden; touch-action: pan-y; }
 #chatFriends { width: 35%; border-right: 1px solid #ddd; overflow-y: auto; overflow-x: hidden; flex-shrink: 0; transition: width 0.2s ease; }
-.chat-friend-item { padding: 10px; cursor: pointer; border-bottom: 1px solid #eee; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chat-friend-item { padding: 10px; cursor: pointer; border-bottom: 1px solid #eee; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; position: relative; }
+.chat-friend-item .unread-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #ff3b30; margin-left: 6px; vertical-align: middle; }
 .chat-friend-item:hover { background: #f5f6f7; }
 #chatBoxContainer { flex: 1; min-width: 0; display: flex; flex-direction: column; overflow: hidden; padding: 5px; border-radius: 8px; background-size: cover; background-position: center; }
 .chat-title-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
@@ -65,6 +76,16 @@ main.app-main { padding: 15px; max-width: 600px; margin: 0 auto; width: 100%; ov
 
 /* Chế độ vuốt để xem full đoạn chat: ẩn hẳn danh sách bạn bè */
 .chat-body.chat-focused #chatFriends { display: none; }
+
+.msg-row { margin-bottom: 6px; display: flex; }
+.msg-row.mine { justify-content: flex-end; }
+.msg-row:not(.mine) { justify-content: flex-start; }
+.msg-bubble { display: inline-block; padding: 8px 14px; border-radius: 18px; background: #e4e6eb; color: #050505; text-align: left; max-width: 78%; }
+.msg-bubble.mine { background: #0084ff; color: #fff; border-bottom-right-radius: 4px; }
+.msg-bubble:not(.mine) { border-bottom-left-radius: 4px; }
+.msg-bubble p { margin: 0; font-size: 14px; line-height: 1.35; word-break: break-word; }
+.msg-bubble small { display: block; margin-top: 3px; font-size: 10px; opacity: 0.7; }
+.msg-bubble.mine small { color: rgba(255,255,255,0.85); }
 #chatTitleText { font-weight: bold; font-size: 14px; margin-bottom: 8px; color: #1877f2; background: rgba(255,255,255,0.8); padding: 4px 8px; border-radius: 4px; }
 #messages { flex: 1; overflow-y: auto; background: rgba(249,249,249,0.9); padding: 10px; border-radius: 8px; border: 1px solid #eee; margin-bottom: 8px; }
 .chat-inputbar { display: flex; flex-direction: column; gap: 6px; background: rgba(255,255,255,0.9); padding: 6px; border-radius: 6px; }
@@ -74,12 +95,6 @@ main.app-main { padding: 15px; max-width: 600px; margin: 0 auto; width: 100%; ov
 .chat-message-row input[type="text"] { flex: 1; min-width: 0; padding: 8px; border: 1px solid #ddd; border-radius: 6px; }
 #sendBtn { background: #1877f2; color: #fff; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; flex-shrink: 0; }
 
-.msg-row { margin-bottom: 8px; text-align: left; }
-.msg-row.mine { text-align: right; }
-.msg-bubble { display: inline-block; padding: 8px 12px; border-radius: 8px; background: #fff; text-align: left; box-shadow: 0 1px 2px rgba(0,0,0,0.1); max-width: 80%; }
-.msg-bubble.mine { background: #dcf8c6; }
-.msg-bubble p { margin: 0; font-size: 13px; }
-.msg-bubble small { font-size: 9px; opacity: 0.6; }
 .chat-media { max-width: 200px; display: block; margin-top: 4px; }
 .chat-media-img { border-radius: 6px; }
 
@@ -117,6 +132,14 @@ main.app-main { padding: 15px; max-width: 600px; margin: 0 auto; width: 100%; ov
 #awardBtn { background: #28a745; }
 #awardBadBtn { background: #dc3545; }
 #adminMsg { margin-top: 10px; font-weight: bold; font-size: 13px; }
+.reset-btn { width: 100%; margin-top: 10px; background: #6c757d; color: #fff; border: none; padding: 9px; border-radius: 6px; cursor: pointer; font-size: 13px; }
+.reset-btn:hover { background: #5a6268; }
+
+.rewards-table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; font-size: 13px; }
+.rewards-table th, .rewards-table td { padding: 8px 10px; border-bottom: 1px solid #eee; text-align: left; }
+.rewards-table th { background: #f5f6f7; font-size: 12px; color: #555; }
+.rewards-table td.count-good { color: #28a745; font-weight: 700; }
+.rewards-table td.count-bad { color: #dc3545; font-weight: 700; }
 
 /* ---------- Modal thông báo ---------- */
 .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 1000; }
