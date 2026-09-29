@@ -1,5 +1,5 @@
 // ⚠️ Sau khi Deploy code.gs, dán URL /exec vào đây:
-const API_URL = "https://script.google.com/macros/s/AKfycbyM-ttM0ADFlv57jROk3yboKbyf26cbm_1tWcrUjPNY3FbB7CTqnaZiS-YIWx9Bs27a/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzZfiskRu1sgVFUU-cBd8tJcaK2aoNzv0nGwcZwmlrC7whmCp9iSycTeO6jHUfJCShy/exec";
 const ADMIN_EMAIL = 'lengocnhu1805@gmail.com'; // email này tự thấy tab Admin khi đăng nhập; mật khẩu do chính admin đặt lúc đăng ký
 
 let currentUser = null;
@@ -8,6 +8,11 @@ let base64Media = "";
 let mediaType = "";
 let mediaRecorder = null;
 let audioChunks = [];
+
+// ---------- Trạng thái thông báo ----------
+let pendingRequestsList = [];      // lời mời kết bạn đang chờ
+let conversationsMap = {};         // email bạn (thường) -> { email, lastFrom, lastText, lastTime }
+let notifRefreshTimer = null;
 
 try {
   currentUser = JSON.parse(localStorage.getItem('friendbook_user')) || null;
@@ -49,6 +54,7 @@ function initApp() {
   $('sendSetLoveBtn')?.addEventListener('click', handleSendSetLoveRequest);
   $('awardBtn')?.addEventListener('click', () => handleAwardBadge('ngoan'));
   $('awardBadBtn')?.addEventListener('click', () => handleAwardBadge('hu'));
+  $('resetRewardsBtn')?.addEventListener('click', handleResetRewards);
   $('closeModal')?.addEventListener('click', () => $('badgeModal').classList.add('hidden'));
 
   const imageInput = $('imageInput'), videoInput = $('videoInput');
@@ -108,6 +114,9 @@ function showMainApp() {
 
   switchTab('feed');
   checkRewardsNotification();
+  refreshNotifications();
+  if (notifRefreshTimer) clearInterval(notifRefreshTimer);
+  notifRefreshTimer = setInterval(refreshNotifications, 15000);
 }
 
 function showAuthScreen() {
@@ -115,6 +124,7 @@ function showAuthScreen() {
   $('app').classList.add('hidden');
   $('logout').classList.add('hidden');
   $('who').textContent = '';
+  if (notifRefreshTimer) { clearInterval(notifRefreshTimer); notifRefreshTimer = null; }
   try { localStorage.removeItem('friendbook_user'); } catch (e) {}
 }
 
@@ -189,6 +199,7 @@ function switchTab(tabName) {
   if (tabName === 'rewards') loadRewards();
   if (tabName === 'friends') loadFriendsData();
   if (tabName === 'setlove') loadSetLoveData();
+  if (tabName === 'adminTab') loadAdminRewardsSummary();
 }
 
 // ---------- Bảng tin ----------
@@ -351,10 +362,11 @@ async function loadChatUsers() {
     const result = await apiGet({ action: 'getMyFriends', email: currentUser.email });
     if (result.status === 'success') {
       list.innerHTML = result.friends.map((u) => `
-        <div class="chat-friend-item" onclick="selectChatUser('${escapeHtml(u.email)}', '${escapeHtml(u.name)}')">
+        <div class="chat-friend-item" data-email="${escapeHtml(u.email)}" onclick="selectChatUser('${escapeHtml(u.email)}', '${escapeHtml(u.name)}')">
           👤 ${escapeHtml(u.name)}
         </div>
       `).join('') || '<p class="empty-hint small">Chưa có bạn.</p>';
+      renderChatUnreadDots();
     }
   } catch (e) {}
 }
@@ -427,6 +439,12 @@ async function loadMessages() {
         `;
       }).join('') || '<p class="empty-hint small">Chưa có tin nhắn.</p>';
       msgContainer.scrollTop = msgContainer.scrollHeight;
+
+      if (result.messages.length) {
+        markConversationSeen(currentChatUser, result.messages[result.messages.length - 1].time);
+        renderNotifBadge();
+        renderChatUnreadDots();
+      }
     }
   } catch (e) {}
 }
@@ -620,6 +638,106 @@ async function checkRewardsNotification() {
   } catch (e) {}
 }
 
+// ---------- Thông báo (chuông) ----------
+
+function seenKey(friendEmail) {
+  return `chat_seen_${currentUser.email}_${friendEmail}`.toLowerCase();
+}
+
+function markConversationSeen(friendEmail, lastTime) {
+  if (!friendEmail || !lastTime) return;
+  try { localStorage.setItem(seenKey(friendEmail), lastTime); } catch (e) {}
+}
+
+function isConversationUnread(convo) {
+  if (!convo || !convo.lastFrom) return false;
+  if (String(convo.lastFrom).toLowerCase() === String(currentUser.email).toLowerCase()) return false; // tin nhắn cuối là của mình gửi
+  try { return localStorage.getItem(seenKey(convo.email)) !== convo.lastTime; } catch (e) { return true; }
+}
+
+async function refreshNotifications() {
+  if (!currentUser) return;
+  try {
+    const [reqResult, convoResult] = await Promise.all([
+      apiGet({ action: 'getFriendRequests', email: currentUser.email }),
+      apiGet({ action: 'getConversationsSummary', email: currentUser.email })
+    ]);
+    pendingRequestsList = reqResult.status === 'success' ? reqResult.requests : [];
+    conversationsMap = {};
+    if (convoResult.status === 'success') {
+      convoResult.conversations.forEach((c) => { conversationsMap[String(c.email).toLowerCase()] = c; });
+    }
+  } catch (e) {}
+  renderNotifBadge();
+  renderChatUnreadDots();
+}
+
+function renderNotifBadge() {
+  const unreadConvoCount = Object.values(conversationsMap).filter(isConversationUnread).length;
+  const total = pendingRequestsList.length + unreadConvoCount;
+  const badge = $('notifBadge');
+  if (!badge) return;
+  if (total > 0) {
+    badge.textContent = total > 9 ? '9+' : total;
+    badge.classList.remove('hidden');
+  } else {
+    badge.classList.add('hidden');
+  }
+}
+
+function toggleNotifPanel() {
+  const panel = $('notifPanel');
+  if (!panel) return;
+  const opening = panel.classList.contains('hidden');
+  panel.classList.toggle('hidden');
+  if (opening) renderNotifPanel();
+}
+
+function renderNotifPanel() {
+  const panel = $('notifPanel');
+  if (!panel) return;
+  const unreadConvos = Object.values(conversationsMap).filter(isConversationUnread);
+  const items = [];
+
+  pendingRequestsList.forEach((r) => {
+    items.push(`<button class="notif-item" onclick="closeNotifAnd('friends')">👥 <b>${escapeHtml(r.name)}</b> gửi lời mời kết bạn</button>`);
+  });
+  unreadConvos.forEach((c) => {
+    items.push(`<button class="notif-item" onclick="closeNotifAndOpenChat('${escapeHtml(c.email)}', '${escapeHtml(c.email)}')">💬 Tin nhắn mới: ${escapeHtml(c.lastText || '').slice(0, 40)}</button>`);
+  });
+
+  panel.innerHTML = items.join('') || '<div class="notif-empty">Không có thông báo mới.</div>';
+}
+
+function closeNotifAnd(tabName) {
+  $('notifPanel')?.classList.add('hidden');
+  switchTab(tabName);
+}
+
+function closeNotifAndOpenChat(email, name) {
+  $('notifPanel')?.classList.add('hidden');
+  switchTab('chat');
+  selectChatUser(email, name);
+}
+
+function renderChatUnreadDots() {
+  document.querySelectorAll('.chat-friend-item').forEach((el) => {
+    const email = el.getAttribute('data-email');
+    const convo = conversationsMap[String(email).toLowerCase()];
+    const dot = el.querySelector('.unread-dot');
+    if (convo && isConversationUnread(convo)) {
+      if (!dot) el.insertAdjacentHTML('beforeend', '<span class="unread-dot"></span>');
+    } else if (dot) {
+      dot.remove();
+    }
+  });
+}
+
+document.addEventListener('click', (e) => {
+  const wrap = document.querySelector('.notif-wrap');
+  if (wrap && !wrap.contains(e.target)) $('notifPanel')?.classList.add('hidden');
+});
+
 async function loadRewards() {
   try {
     const result = await apiGet({ action: 'getRewards', email: currentUser.email });
@@ -659,8 +777,56 @@ async function handleAwardBadge(type) {
     if (result.status === 'success') {
       setMsg(msg, type === 'hu' ? '⚠️ Đã phát phiếu bé hư thành công!' : '🎉 Phát phiếu bé ngoan thành công!', '#28a745');
       $('awardReason').value = '';
+      loadAdminRewardsSummary();
     } else {
       setMsg(msg, '❌ Lỗi phát phiếu.', '#ff4d4d');
+    }
+  } catch (e) {
+    setMsg(msg, '❌ Lỗi kết nối.', '#ff4d4d');
+  }
+}
+
+async function loadAdminRewardsSummary() {
+  const container = $('adminRewardsSummary');
+  if (!container) return;
+  container.innerHTML = '<p class="empty-hint">⏳ Đang tải...</p>';
+  try {
+    const result = await apiGet({ action: 'getAllRewardsSummary' });
+    if (result.status === 'success') {
+      const rows = result.summary.map((u) => `
+        <tr>
+          <td>${escapeHtml(u.name)}<br><small>${escapeHtml(u.email)}</small></td>
+          <td class="count-good">⭐ ${u.ngoan}</td>
+          <td class="count-bad">⚠️ ${u.hu}</td>
+        </tr>
+      `).join('');
+      container.innerHTML = `
+        <table class="rewards-table">
+          <thead><tr><th>Thành viên</th><th>Bé ngoan</th><th>Bé hư</th></tr></thead>
+          <tbody>${rows || '<tr><td colspan="3">Chưa có dữ liệu.</td></tr>'}</tbody>
+        </table>
+      `;
+    }
+  } catch (e) {
+    container.innerHTML = '<p class="empty-hint error">Lỗi tải thống kê.</p>';
+  }
+}
+
+async function handleResetRewards() {
+  const select = $('awardUser');
+  const email = select?.value;
+  const name = select?.options[select.selectedIndex]?.text || email;
+  if (!email) return;
+  if (!confirm(`Xoá sạch toàn bộ phiếu bé ngoan/bé hư của "${name}"? Không thể hoàn tác.`)) return;
+
+  const msg = $('adminMsg');
+  try {
+    const result = await api('resetRewards', { email });
+    if (result.status === 'success') {
+      setMsg(msg, `🔄 Đã reset phiếu cho ${name}.`, '#28a745');
+      loadAdminRewardsSummary();
+    } else {
+      setMsg(msg, '❌ Lỗi khi reset.', '#ff4d4d');
     }
   } catch (e) {
     setMsg(msg, '❌ Lỗi kết nối.', '#ff4d4d');
